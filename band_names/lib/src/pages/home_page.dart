@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       body: ListView.builder(
         physics: BouncingScrollPhysics(),
         itemCount: this.bands.length,
-        itemBuilder: (BuildContext context, int index) => this._createBandTile(this.bands[index]),
+        itemBuilder: (BuildContext context, int index) => this._createBandTile(index, this.bands[index]),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -51,15 +51,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Method that creates the band list tile.
-  ListTile _createBandTile(BandModel band) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Text(band.name.substring(0, 2)),
-        backgroundColor: Colors.blue[100],
+  Widget _createBandTile(int index, BandModel band) {
+    return Dismissible(
+      key: Key(band.id),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (DismissDirection direction) => this._onDeleteBand(index, band),
+      background: Container(
+        color: Colors.red.withOpacity(0.1),
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            Icon(Icons.delete, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Delete Band', style: TextStyle(color: Colors.red)),
+          ],
+        ),
       ),
-      title: Text(band.name, style: TextStyle(color: Colors.black)),
-      trailing: Text(band.votes.toString(), style: TextStyle(fontSize: 16)),
-      onTap: () => print(band.name),
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Text(band.name.substring(0, 2)),
+          backgroundColor: Colors.blue[100],
+        ),
+        title: Text(band.name, style: TextStyle(color: Colors.black)),
+        trailing: Text(band.votes.toString(), style: TextStyle(fontSize: 16)),
+        onTap: () => print(band.name),
+      ),
     );
   }
 
@@ -152,5 +169,10 @@ class _HomePageState extends State<HomePage> {
     this.bands.add(new BandModel(id: DateTime.now().toString(), name: name, votes: 0));
     Navigator.pop(this.context);
     this.setState(() {});
+  }
+
+  // Method that is called when the user deletes an element from the list.
+  void _onDeleteBand(int index, BandModel band) {
+    print('Deleting band...');
   }
 }
