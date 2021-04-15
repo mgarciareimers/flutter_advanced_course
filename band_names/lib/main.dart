@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Constants.
-import 'package:band_names/src/constants/routes.dart';
+import 'package:band_names/src/commons/constants/routes.dart';
 
 // Pages.
 import 'package:band_names/src/pages/home_page.dart';

@@ -1,12 +1,156 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+// Models.
+import 'package:band_names/src/models/band_model.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<BandModel> bands;
+
+  bool typeBandNameError;
+
+  @override
+  void initState() {
+    this.bands = bands = [
+      new BandModel(id: '1', name: 'Metallica', votes: 0),
+      new BandModel(id: '2', name: 'Queen', votes: 0),
+      new BandModel(id: '3', name: 'Héroes del Silencio', votes: 0),
+      new BandModel(id: '4', name: 'Bon Jovi', votes: 0),
+    ];
+
+    this.typeBandNameError = false;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('Hello World!'),
+      appBar: AppBar(
+        title: Text('Band Names', style: TextStyle(color: Colors.black87)),
+        backgroundColor: Colors.white,
+        elevation: 1,
+      ),
+      body: ListView.builder(
+        physics: BouncingScrollPhysics(),
+        itemCount: this.bands.length,
+        itemBuilder: (BuildContext context, int index) => this._createBandTile(this.bands[index]),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        elevation: 1,
+        onPressed: () => this._onAddBandFloatingActionButtonClicked(),
       ),
     );
+  }
+
+  // Method that creates the band list tile.
+  ListTile _createBandTile(BandModel band) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(band.name.substring(0, 2)),
+        backgroundColor: Colors.blue[100],
+      ),
+      title: Text(band.name, style: TextStyle(color: Colors.black)),
+      trailing: Text(band.votes.toString(), style: TextStyle(fontSize: 16)),
+      onTap: () => print(band.name),
+    );
+  }
+
+  // Method that is called when the user clicks the add floating button.
+  void _onAddBandFloatingActionButtonClicked() {
+    this.typeBandNameError = false;
+    this._showNewBandButtonClicked();
+  }
+
+  // Method that is called when the user clicks the add floating button.
+  void _showNewBandButtonClicked() async {
+    TextEditingController textEditingController = new TextEditingController();
+
+    if (!Platform.isIOS) {
+      return await showDialog(
+        context: this.context,
+        builder: (context) => AlertDialog(
+          title: Text('New Band Name:'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: textEditingController,
+              ),
+              SizedBox(height: this.typeBandNameError ? 8 : 0,),
+              this.typeBandNameError ?
+              Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Type a band name error', style: TextStyle(color: Colors.red, fontSize: 12, fontStyle: FontStyle.italic))
+              ) : Container(),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              child: Text('Add'),
+              elevation: 5,
+              textColor: Colors.blue,
+              onPressed: () => this._onAddButtonClicked(textEditingController.text),
+            ),
+          ],
+        ),
+      );
+    }
+
+    showCupertinoDialog(
+      context: this.context,
+      builder: (context) => CupertinoAlertDialog(
+          title: Text('New Band Name:'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 8),
+              CupertinoTextField(
+                controller: textEditingController,
+              ),
+              SizedBox(height: this.typeBandNameError ? 8 : 0,),
+              this.typeBandNameError ?
+              Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Type a band name error', style: TextStyle(color: Colors.red, fontSize: 12, fontStyle: FontStyle.italic))
+              ) : Container(),
+            ],
+          ),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Add'),
+            onPressed: () => this._onAddButtonClicked(textEditingController.text),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            child: Text('Cancel'),
+            onPressed: () => Navigator.pop(this.context),
+          ),
+        ],
+      )
+    );
+
+  }
+
+  // Method that is called when the user clicks the add button.
+  void _onAddButtonClicked(String name) {
+    if (name == null || name.length <= 1) {
+      this.typeBandNameError = true;
+      Navigator.pop(this.context);
+      this._showNewBandButtonClicked();
+      return;
+    }
+
+    this.bands.add(new BandModel(id: DateTime.now().toString(), name: name, votes: 0));
+    Navigator.pop(this.context);
+    this.setState(() {});
   }
 }
