@@ -5,7 +5,7 @@ class BandsModel {
         this.bands = [];
     }
 
-    addBanc(band = BandModel()) {
+    addBand(band = BandModel()) {
         this.bands.push(band);
         return this.bands;
     }
@@ -27,6 +27,8 @@ class BandsModel {
 
             return band;
         });
+
+        return this.bands;
     }
 }
 

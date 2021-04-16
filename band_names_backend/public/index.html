@@ -28,13 +28,10 @@
         // Client emits a message to the server.
         socket.emit('message', { uuid: uuid, name: 'My name', message: 'This is a message' });
         
-        // Client listens a message from the server.
-        socket.on('message', (data) => {
-            if (uuid == data.uuid) {
-                console.log('You sent:', data)
-            } else {
-                console.log(`${ data.uuid } sent:`, data)
-            }
+        // Client gets bands from the server.
+        socket.on('getBands', (data) => {
+            console.clear();
+            console.table(data);
         });
         
     </script>
