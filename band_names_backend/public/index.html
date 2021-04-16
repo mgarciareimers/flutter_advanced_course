@@ -31,6 +31,7 @@
         // Client gets bands from the server.
         socket.on('getBands', (data) => {
             console.clear();
+            console.log(data.length);
             console.table(data);
         });
         

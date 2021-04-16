@@ -4,7 +4,7 @@ class BandModel {
     constructor(name = '') {
        this.id = uuidV4();
        this.name = name;
-       this.vote = 0;
+       this.votes = 0;
     }
 }
 

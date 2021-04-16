@@ -37,17 +37,35 @@ class Socket {
 
             // Listen 'getBands' event.
             client.on('getBands', (data) => {
-                client.emit('getBands', this.bands.get()); // Emit to everybody but the client who sends the data.
+                client.emit('getBands', this.bands.get()); // Emit to the client.
             });
 
             // Listen 'addBand' event.
             client.on('addBand', (data) => {
                 this.bands.addBand(new BandModel(data.name));
-
-                this.io.emit('getBands', this.bands.get()); // Emit to everybody but the client who sends the data.
+                this.io.emit('getBands', this.bands.get()); // Emit to everybody.
             });
 
+            // Listen 'voteBand' event.
+            client.on('voteBand', (data) => {
+                this.bands.voteBand(data.id);
+                this.io.emit('getBands', this.bands.get()); // Emit to everybody.
+            });
 
+            // Listen 'deleteBand' event.
+            client.on('deleteBand', (data) => { 
+                this.bands.deleteBand(data.id);
+                this.io.emit('getBands', this.bands.get()); // Emit to everybody.
+            });
+
+            // Listen 'deleteBandList' event.
+            client.on('deleteBands', (data) => { 
+                for (let i = 0; i < data.bands.length; i++) {
+                    this.bands.deleteBand(data.bands[i].id);
+                }
+
+                this.io.emit('getBands', this.bands.get()); // Emit to everybody.
+            });
         });
     }
 }

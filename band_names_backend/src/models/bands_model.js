@@ -15,7 +15,7 @@ class BandsModel {
     }
 
     deleteBand(id = '') {
-        this.bands = this.bands.filter(band => band !== id);
+        this.bands = this.bands.filter(band => band.id !== id);
         return this.bands;
     }
 
