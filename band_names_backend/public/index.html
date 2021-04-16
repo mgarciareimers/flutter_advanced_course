@@ -26,7 +26,7 @@
         });
 
         // Client emits a message to the server.
-        socket.emit('message', { uuid: uuid, name: 'My name' });
+        socket.emit('message', { uuid: uuid, name: 'My name', message: 'This is a message' });
         
         // Client listens a message from the server.
         socket.on('message', (data) => {

@@ -13,15 +13,18 @@ class Socket {
     handleMessages() {
         this.io.on('connection', client => {
             console.log('Connected!');
-
+            
+            // Listen disconnection event.
             client.on('disconnect', () => {
                 console.log('Disconnected!')
             });
-
+            
+            // Listen message event.
             client.on('message', (data) => {
                 console.log(`Client ${ data.uuid } sends:`, data);
 
-                this.io.emit('message', data);
+                //this.io.emit('message', data); // Emit to everybody.
+                client.broadcast.emit('message', data); // Emit to everybody but the client who sends the data.
             });
         });
     }
