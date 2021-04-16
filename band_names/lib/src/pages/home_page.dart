@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<BandModel> bands;
+  List<BandModel> bandsToRemove;
 
   bool typeBandNameError;
 
@@ -24,12 +26,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    this.bands = bands = [
-      new BandModel(id: '1', name: 'Metallica', votes: 0),
-      new BandModel(id: '2', name: 'Queen', votes: 0),
-      new BandModel(id: '3', name: 'Héroes del Silencio', votes: 0),
-      new BandModel(id: '4', name: 'Bon Jovi', votes: 0),
-    ];
+    this.bands = [];
+    this.bandsToRemove = [];
 
     this.typeBandNameError = false;
     super.initState();
@@ -40,39 +38,61 @@ class _HomePageState extends State<HomePage> {
     this._init();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Band Names', style: TextStyle(color: Colors.black87)),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 8),
-            child: InkWell(
-              onTap: () => this.socketService.serverStatus == ServerStatus.Online ? this.socketService.socket.disconnect() : this.socketService.socket.connect(),
-              child: Icon(
-                this.socketService.serverStatus == ServerStatus.Online ? Icons.check_circle : Icons.offline_bolt,
-                color: this.socketService.serverStatus == ServerStatus.Online ? Colors.blue : Colors.red,
-              ),
-            ),
-          )
-        ],
-      ),
-      body: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: this.bands.length,
-        itemBuilder: (BuildContext context, int index) => this._createBandTile(index, this.bands[index]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        elevation: 1,
-        onPressed: () => this._onAddBandFloatingActionButtonClicked(),
-      ),
+      appBar: this._createAppBar(),
+      body: this._createBandList(),
+      floatingActionButton: this._createAddBandFloatingActionButton(),
     );
   }
 
   // Method that initializes the variables.
   void _init() {
     this.socketService = Provider.of<SocketService>(context);
+    this._setSocketHandlers();
+  }
+
+  // Method that sets the socket handlers.
+  void _setSocketHandlers() {
+    this.socketService.socket.on('getBands', (data) {
+      this.bands = List<BandModel>.from((data as List).map((band) => BandModel.fromJson(band)));
+
+      if (this.bandsToRemove.length > 0) {
+        this.socketService.socket.emit('deleteBands', { 'bands': List<Map<String, dynamic>>.from(this.bandsToRemove.map((bandToRemove) => bandToRemove.toJson())) });
+        this.bandsToRemove = [];
+        return;
+      }
+
+      this.setState(() {});
+    });
+  }
+  
+  // Method that creates the app bar.
+  AppBar _createAppBar() {
+    return AppBar(
+      title: Text('Band Names', style: TextStyle(color: Colors.black87)),
+      backgroundColor: Colors.white,
+      elevation: 1,
+      actions: [
+        Container(
+          margin: EdgeInsets.only(right: 8),
+          child: InkWell(
+            onTap: () => this.socketService.serverStatus == ServerStatus.Online ? this.socketService.socket.disconnect() : this.socketService.socket.connect(),
+            child: Icon(
+              this.socketService.serverStatus == ServerStatus.Online ? Icons.check_circle : Icons.offline_bolt,
+              color: this.socketService.serverStatus == ServerStatus.Online ? Colors.blue : Colors.red,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+  
+  // Method that creates the band list.
+  Widget _createBandList() {
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: this.bands.length,
+      itemBuilder: (BuildContext context, int index) => this._createBandTile(index, this.bands[index]),
+    );
   }
 
   // Method that creates the band list tile.
@@ -100,8 +120,17 @@ class _HomePageState extends State<HomePage> {
         ),
         title: Text(band.name, style: TextStyle(color: Colors.black)),
         trailing: Text(band.votes.toString(), style: TextStyle(fontSize: 16)),
-        onTap: () => print(band.name),
+        onTap: () => this.socketService.socket.emit('voteBand', { 'id': band.id }),
       ),
+    );
+  }
+  
+  // Method that creates the add band floating action button.
+  FloatingActionButton _createAddBandFloatingActionButton() {
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      elevation: 1,
+      onPressed: () => this._onAddBandFloatingActionButtonClicked(),
     );
   }
 
@@ -179,7 +208,6 @@ class _HomePageState extends State<HomePage> {
         ],
       )
     );
-
   }
 
   // Method that is called when the user clicks the add button.
@@ -190,14 +218,20 @@ class _HomePageState extends State<HomePage> {
       this._showNewBandButtonClicked();
       return;
     }
+    
+    this.socketService.socket.emit('addBand', new BandModel(name: name).toJson());
 
-    this.bands.add(new BandModel(id: DateTime.now().toString(), name: name, votes: 0));
     Navigator.pop(this.context);
-    this.setState(() {});
   }
 
   // Method that is called when the user deletes an element from the list.
   void _onDeleteBand(int index, BandModel band) {
-    print('Deleting band...');
+    if (this.socketService.serverStatus == ServerStatus.Online) {
+      this.socketService.socket.emit('deleteBand', { 'id': band.id });
+    } else {
+      this.bandsToRemove.add(band);
+      this.bands.removeAt(index);
+      this.setState(() {});
+    }
   }
 }

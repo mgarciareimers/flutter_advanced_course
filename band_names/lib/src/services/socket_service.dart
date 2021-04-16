@@ -30,12 +30,6 @@ class SocketService with ChangeNotifier {
       notifyListeners();
     });
 
-    // Message handler.
-    this._socket.on('message', (data) {
-      print(data);
-      notifyListeners();
-    });
-
     this._socket.connect();
   }
 }
