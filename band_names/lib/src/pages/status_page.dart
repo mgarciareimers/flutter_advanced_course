@@ -12,7 +12,23 @@ class StatusPage extends StatelessWidget {
           title: Text('Band Names', style: TextStyle(color: Colors.black87)),
           backgroundColor: Colors.white,
           elevation: 1,
-        )
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(socketService.serverStatus.toString()),
+            ],
+          ),
+        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          socketService.socket.emit('message', { 'uuid': DateTime.now().millisecond, 'name': 'Flutter', 'message': 'Hi, I am sending from Flutter' });
+        },
+        child: Icon(Icons.message),
+        elevation: 1,
+      ),
     );
   }
 }
+

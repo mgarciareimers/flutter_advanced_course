@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Services.
+import 'package:band_names/src/services/socket_service.dart';
 
 // Models.
 import 'package:band_names/src/models/band_model.dart';
@@ -15,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   List<BandModel> bands;
 
   bool typeBandNameError;
+
+  SocketService socketService;
 
   @override
   void initState() {
@@ -31,11 +37,25 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    this._init();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Band Names', style: TextStyle(color: Colors.black87)),
         backgroundColor: Colors.white,
         elevation: 1,
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: () => this.socketService.serverStatus == ServerStatus.Online ? this.socketService.socket.disconnect() : this.socketService.socket.connect(),
+              child: Icon(
+                this.socketService.serverStatus == ServerStatus.Online ? Icons.check_circle : Icons.offline_bolt,
+                color: this.socketService.serverStatus == ServerStatus.Online ? Colors.blue : Colors.red,
+              ),
+            ),
+          )
+        ],
       ),
       body: ListView.builder(
         physics: BouncingScrollPhysics(),
@@ -48,6 +68,11 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => this._onAddBandFloatingActionButtonClicked(),
       ),
     );
+  }
+
+  // Method that initializes the variables.
+  void _init() {
+    this.socketService = Provider.of<SocketService>(context);
   }
 
   // Method that creates the band list tile.
