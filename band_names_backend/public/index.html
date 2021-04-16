@@ -8,5 +8,35 @@
 </head>
 <body>
     <h1>Access Denied</h1>
+
+    <script src="socket.io/socket.io.js"></script>
+
+    <script>
+        let socket = io();
+        const uuid = new Date().getUTCMilliseconds();
+
+        // Client is connected to the server.
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        // Client is disconnected from the server.
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
+        // Client emits a message to the server.
+        socket.emit('message', { uuid: uuid, name: 'My name' });
+        
+        // Client listens a message from the server.
+        socket.on('message', (data) => {
+            if (uuid == data.uuid) {
+                console.log('You sent:', data)
+            } else {
+                console.log(`${ data.uuid } sent:`, data)
+            }
+        });
+        
+    </script>
 </body>
 </html>
