@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 // Services.
 import 'package:band_names/src/services/socket_service.dart';
@@ -39,7 +39,14 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: this._createAppBar(),
-      body: this._createBandList(),
+      body: Column(
+        children: [
+          SizedBox(height: 12),
+          this._createVotesStats(),
+          SizedBox(height: 12),
+          this._createBandList(),
+        ],
+      ),
       floatingActionButton: this._createAddBandFloatingActionButton(),
     );
   }
@@ -85,13 +92,67 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
+  // Method that creates the votes stats.
+  Widget _createVotesStats() {
+    Map<String, double> dataMap = new Map();
+
+    for (BandModel band in this.bands) {
+      dataMap.putIfAbsent(band.name, () => band.votes.toDouble());
+    }
+
+    if (dataMap.length == 0) {
+      dataMap.putIfAbsent('No band', () => 100);
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      width: double.infinity,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          padding: EdgeInsets.only(left: 12),
+          height: MediaQuery.of(this.context).size.height * 0.2,
+          child: PieChart(
+            dataMap: dataMap,
+            animationDuration: Duration(milliseconds: 800),
+            // chartLegendSpacing: 32,
+            chartRadius: MediaQuery.of(this.context).size.height * 0.15,
+            //colorList: colorList,
+            initialAngleInDegree: 0,
+            chartType: ChartType.ring,
+            ringStrokeWidth: 32,
+            centerText: "Votes",
+            legendOptions: LegendOptions(
+              showLegendsInRow: false,
+              legendPosition: LegendPosition.right,
+              showLegends: true,
+              legendShape: BoxShape.circle,
+              legendTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            chartValuesOptions: ChartValuesOptions(
+              showChartValueBackground: true,
+              showChartValues: true,
+              showChartValuesInPercentage: true,
+              showChartValuesOutside: true,
+              decimalPlaces: 0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   
   // Method that creates the band list.
   Widget _createBandList() {
-    return ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: this.bands.length,
-      itemBuilder: (BuildContext context, int index) => this._createBandTile(index, this.bands[index]),
+    return Expanded(
+      child: ListView.builder(
+        physics: BouncingScrollPhysics(),
+        itemCount: this.bands.length,
+        itemBuilder: (BuildContext context, int index) => this._createBandTile(index, this.bands[index]),
+      ),
     );
   }
 
