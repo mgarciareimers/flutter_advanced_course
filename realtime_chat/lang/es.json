@@ -1,7 +1,15 @@
 {
+  "alreadyAnAccount" : "¿Ya tienes una cuenta?",
   "appName" : "Tuenti Chat",
-  "createAccountNow" : "Crea una ahora",
+  "confirmPassword" : "Confirma tu contraseña",
+  "createAccount" : "Crear Cuenta",
+  "createAccountNow" : "Créate una ahora",
+  "email" : "Email",
+  "login" : "Iniciar Sesión",
+  "logInHere" : "Inicia sesión aquí",
+  "name" : "Nombre",
   "notAnAccount" : "¿No tienes cuenta?",
+  "password" : "Contraseña",
   "termsAndConditions" : "Términos y Condiciones de Uso",
   "" : ""
 }
