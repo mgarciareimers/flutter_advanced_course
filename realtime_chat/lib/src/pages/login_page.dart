@@ -1,4 +1,5 @@
 import 'package:app/src/commons/constants/sizes.dart';
+import 'package:app/src/commons/utils/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 // Constants.
@@ -16,7 +17,7 @@ class LoginPage extends StatelessWidget {
             _Logo(),
             _Form(),
             _Labels(),
-            Text('Términos y condiciones de uso', style: TextStyle(fontSize: Sizes.FONT_14, color: Colors.black54, fontWeight: FontWeight.w200)),
+            Text(AppLocalizations.of(context).translate('termsAndConditions'), style: TextStyle(fontSize: Sizes.FONT_14, color: Colors.black54, fontWeight: FontWeight.w200)),
           ],
         ),
       )
@@ -34,7 +35,7 @@ class _Logo extends StatelessWidget {
           children: [
             Image(image: AssetImage('assets/logo.png'), width: 180,),
             SizedBox(height: Sizes.MARGIN_16),
-            Text('Tuenti Chat', style: TextStyle(fontSize: Sizes.FONT_24, fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context).translate('appName'), style: TextStyle(fontSize: Sizes.FONT_24, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -66,10 +67,10 @@ class _Labels extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          Text('¿No tienes cuenta?', style: TextStyle(fontSize: Sizes.FONT_14, color: Colors.black54, fontWeight: FontWeight.w300)),
+          Text(AppLocalizations.of(context).translate('notAnAccount'), style: TextStyle(fontSize: Sizes.FONT_14, color: Colors.black54, fontWeight: FontWeight.w300)),
           SizedBox(height: Sizes.MARGIN_4),
           InkWell(
-            child: Text('Crea una ahora', style: TextStyle(fontSize: Sizes.FONT_16, color: Colors.blue[600], fontWeight: FontWeight.bold))
+            child: Text(AppLocalizations.of(context).translate('createAccountNow'), style: TextStyle(fontSize: Sizes.FONT_16, color: Colors.blue[600], fontWeight: FontWeight.bold))
           ),
         ],
       ),
