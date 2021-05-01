@@ -1,7 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
+// Models.
+import 'package:app/src/models/message_model.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
@@ -10,14 +13,21 @@ import 'package:app/src/commons/utils/app_localizations.dart';
 import 'package:app/src/commons/constants/custom_colors.dart';
 import 'package:app/src/commons/constants/sizes.dart';
 
+// Widgets.
+import 'package:app/src/widgets/chat/message_item.dart';
+
 class ChatPage extends StatefulWidget {
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   TextEditingController textEditingController;
   FocusNode focusNode;
+
+  final String myUid = '1'; // TODO - Delete
+
+  List<MessageItem> messageItems = [];
 
   @override
   void initState() {
@@ -29,6 +39,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     this.textEditingController.dispose();
+
+    for (MessageItem messageItem in this.messageItems) {
+      messageItem.animationController.dispose();
+    }
+
     super.dispose();
   }
 
@@ -40,15 +55,17 @@ class _ChatPageState extends State<ChatPage> {
       body: Container(
         child: Column(
           children: [
-           this._createMessagesList(),
+            this._createMessagesList(),
+            SizedBox(height: Sizes.MARGIN_4 - 1),
             Divider(height: 1),
             this._createTextBox(),
           ],
         ),
-      )
+      ),
     );
   }
 
+  // Method that creates the app bar.
   AppBar _createAppBar() {
     return AppBar(
       backgroundColor: CustomColors.BLUE_TUENTI,
@@ -67,22 +84,19 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  // Method that creates the messages list.
   Widget _createMessagesList() {
-    return  Flexible(
+    return Flexible(
       child: ListView.builder(
         physics: BouncingScrollPhysics(),
         reverse: true,
-        itemBuilder: (BuildContext context, int index) => this._createMessageItem(),
+        itemCount: this.messageItems.length,
+        itemBuilder: (BuildContext context, int index) => this.messageItems[index],
       ),
     );
   }
 
-  Widget _createMessageItem() {
-    return Container(
-
-    );
-  }
-
+  // Method that creates the text box.
   Widget _createTextBox() {
     return Container(
       color: Colors.white,
@@ -138,8 +152,18 @@ class _ChatPageState extends State<ChatPage> {
 
     await this._sendMessage();
 
+    this.messageItems.insert(0, new MessageItem(
+        message: new MessageModel(uid: this.myUid, text: this.textEditingController.text.trim()),
+        animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 400))
+      )
+    );
+
+    this.messageItems[0].animationController.forward();
+
     this.textEditingController.clear();
     this.focusNode.requestFocus();
+
+    this.setState(() {});
   }
 
   // Method that is called when the user changes the message.

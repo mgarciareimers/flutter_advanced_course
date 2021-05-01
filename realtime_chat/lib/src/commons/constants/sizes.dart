@@ -1,5 +1,6 @@
 class Sizes {
   static const double INPUT_BORDER_RADIUS = 30;
+  static const double MESSAGE_BORDER_RADIUS = 8;
 
   static const double MARGIN_2 = 2;
   static const double MARGIN_4 = 4;
