@@ -10,6 +10,8 @@
   "name" : "Nombre",
   "notAnAccount" : "¿No tienes cuenta?",
   "password" : "Contraseña",
+  "send" : "Enviar",
   "termsAndConditions" : "Términos y Condiciones de Uso",
+  "typeAMessage" : "Escribe un mensaje",
   "" : ""
 }

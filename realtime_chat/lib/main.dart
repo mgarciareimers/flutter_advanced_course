@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: Strings.APP_NAME,
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.USERS_PAGE,
+      initialRoute: Routes.CHAT_PAGE,
       routes: Routes.define(),
 
       // Supported local languages.

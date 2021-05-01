@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // Models.
 import 'package:app/src/models/user_model.dart';
@@ -9,7 +10,6 @@ import 'package:app/src/commons/utils/app_localizations.dart';
 // Constants.
 import 'package:app/src/commons/constants/sizes.dart';
 import 'package:app/src/commons/constants/custom_colors.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class UsersPage extends StatefulWidget {
   @override
@@ -41,20 +41,7 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(AppLocalizations.of(context).translate('appName'), style: TextStyle(color: CustomColors.BLUE_TUENTI)),
-        actions: [
-          Container(
-            width: Sizes.MARGIN_12,
-            margin: EdgeInsets.only(right: Sizes.MARGIN_16),
-            decoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
-            ),
-          )
-        ],
-      ),
+      appBar: this._createAppBar(),
       body: SmartRefresher(
         controller: this.refreshController,
         enablePullDown: true,
@@ -65,6 +52,25 @@ class _UsersPageState extends State<UsersPage> {
         child: this._createUserList(),
         onRefresh: () => this._loadUsers(),
       ),
+    );
+  }
+
+  // Method that creates the app bar.
+  AppBar _createAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      centerTitle: true,
+      title: Text(AppLocalizations.of(context).translate('appName'), style: TextStyle(color: CustomColors.BLUE_TUENTI)),
+      actions: [
+        Container(
+          width: Sizes.MARGIN_12,
+          margin: EdgeInsets.only(right: Sizes.MARGIN_16),
+          decoration: BoxDecoration(
+            color: Colors.green,
+            shape: BoxShape.circle,
+          ),
+        )
+      ],
     );
   }
 
