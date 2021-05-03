@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Server</title>
+</head>
+<body>
+    <h1>Access Denied</h1>
+
+    <script src="socket.io/socket.io.js"></script>
+
+    <script>
+        let socket = io();
+
+        // Client is connected to the server.
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        // Client is disconnected from the server.
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
+        // Client emits a message to the server.
+        // socket.emit('message', { uuid: uuid, name: 'My name', message: 'This is a message' });    
+    </script>
+</body>
+</html>
