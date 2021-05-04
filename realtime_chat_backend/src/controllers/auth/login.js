@@ -14,10 +14,7 @@
  const login = async (req, res) => {
     const { email, password } = req.body; 
     
-    // Hash password.
-    const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
-    
-    // Save user.
+    // Get user.
     const result = await new Promise(resolve => {
         User.findOne({ email: email })
             .then(userDB => resolve(new ResponseModel(true, null, userDB, null)))
