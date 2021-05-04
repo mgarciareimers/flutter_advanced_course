@@ -26,7 +26,7 @@ const UserSchema = Schema({
 UserSchema.plugin(uniqueValidator, { message: 'Ya existe un usuario con el mismo campo "{PATH}".' });
 
 UserSchema.method('toJSON', function() {
-    const { __v, _id, password, ...object } = this.toObject();
+    const { __v, _id, hashedPassword, ...object } = this.toObject();
     object.uid = _id;
 
     return object;

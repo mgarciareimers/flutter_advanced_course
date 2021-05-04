@@ -12,13 +12,13 @@ const User = require('../../models/database/user_model');
 const { generateJwt } = require('../../commons/utils/jwt');
 
 const signUp = async (req, res) => {
-    const { name, email, password, isOnline } = req.body; 
+    const { name, email, password } = req.body; 
 
     
     // Hash password.
     const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
 
-    const user = new User({ name, email, hashedPassword, isOnline });
+    const user = new User({ name, email, hashedPassword });
     
     // Save user.
     const result = await new Promise(resolve => {
