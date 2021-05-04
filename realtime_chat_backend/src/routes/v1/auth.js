@@ -3,10 +3,11 @@
  */
 const { Router } = require('express');
 const controller = require('../../controllers/auth');
+const fieldsValidator = require('../../middlewares/auth_fields_validator');
 
 const router = Router();
 
-router.post('/signup', controller.signUp);
+router.post('/signup', fieldsValidator.validateSignUp(), controller.signUp);
 
 
 module.exports = router;
