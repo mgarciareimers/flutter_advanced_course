@@ -32,10 +32,10 @@ const signUp = async (req, res) => {
     }
 
     // Generate JWT.
-    const tokenResult = await generateJwt(result.data.uid);
+    const tokenResult = await generateJwt(result.data._id);
 
     if (tokenResult == null) {
-        await user.deleteOne({ uid: result.data.uid });
+        await user.deleteOne({ uid: result.data._id });
         return res.status(500).json(new ResponseModel(false, 'Se ha producido un error al crear la cuenta', null, tokenResult.error));
     }
     

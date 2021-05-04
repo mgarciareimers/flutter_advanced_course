@@ -31,7 +31,7 @@
     } 
 
     // Generate JWT.
-    const tokenResult = await generateJwt(result.data.uid);
+    const tokenResult = await generateJwt(result.data._id);
     
     res.status(200).json(new ResponseModel(true, 'Se ha iniciado sesión con éxito.', { user: result.data, token: tokenResult.data }, null));
  }
