@@ -9,9 +9,12 @@
   "logInHere" : "Inicia sesión aquí",
   "name" : "Nombre",
   "notAnAccount" : "¿No tienes cuenta?",
+  "ok" : "Ok",
   "password" : "Contraseña",
   "send" : "Enviar",
   "termsAndConditions" : "Términos y Condiciones de Uso",
   "typeAMessage" : "Escribe un mensaje",
-  "" : ""
+  "" : "",
+
+  "error" : "Error"
 }

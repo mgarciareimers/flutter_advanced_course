@@ -1,12 +1,20 @@
-import 'package:app/src/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Services.
+import 'package:app/src/services/auth_service.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
+import 'package:app/src/commons/utils/show_alert.dart';
+
+// Routes.
+import 'package:app/src/routes/routes.dart';
 
 // Constants.
 import 'package:app/src/commons/constants/custom_colors.dart';
 import 'package:app/src/commons/constants/sizes.dart';
+import 'package:app/src/commons/constants/strings.dart';
 
 // Widgets.
 import 'package:app/src/widgets/text_field_custom.dart';
@@ -85,6 +93,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = Provider.of<AuthService>(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Sizes.MARGIN_16 * 2),
       child: Column(
@@ -104,8 +114,9 @@ class __FormState extends State<_Form> {
           ),
           SizedBox(height: Sizes.MARGIN_16),
           ElevatedButtonCustom(
-            onPressed: this._onLoginButtonClicked,
+            onPressed: (context) => authService.isLogging ? null : this._onLoginButtonClicked(context, authService),
             text: AppLocalizations.of(context).translate('login'),
+            backgroundColor: authService.isLogging ? CustomColors.GRAY : CustomColors.BLUE_TUENTI,
           ),
         ],
       ),
@@ -113,9 +124,16 @@ class __FormState extends State<_Form> {
   }
 
   // Method that is called when the user clicks the "login" button.
-  void _onLoginButtonClicked(BuildContext context) {
-    print(this.emailController.text);
-    print(this.passwordController.text);
+  void _onLoginButtonClicked(BuildContext context, AuthService authService) async {
+    FocusScope.of(context).unfocus();
+
+    final Map<String, dynamic> response = await authService.login(this.emailController.text.trim(), this.passwordController.text.trim());
+
+    if (!response[Strings.SUCCESS]) {
+      return showAlert(context, AppLocalizations.of(context).translate('error'), response[Strings.MESSAGE], AppLocalizations.of(context).translate('ok')); // ERROR.
+    }
+
+    print(response);
   }
 }
 
