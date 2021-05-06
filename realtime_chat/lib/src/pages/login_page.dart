@@ -114,9 +114,9 @@ class __FormState extends State<_Form> {
           ),
           SizedBox(height: Sizes.MARGIN_16),
           ElevatedButtonCustom(
-            onPressed: (context) => authService.isLogging ? null : this._onLoginButtonClicked(context, authService),
+            onPressed: (context) => authService.isLoading ? null : this._onLoginButtonClicked(authService),
             text: AppLocalizations.of(context).translate('login'),
-            backgroundColor: authService.isLogging ? CustomColors.GRAY : CustomColors.BLUE_TUENTI,
+            backgroundColor: authService.isLoading ? CustomColors.GRAY : CustomColors.BLUE_TUENTI,
           ),
         ],
       ),
@@ -124,16 +124,18 @@ class __FormState extends State<_Form> {
   }
 
   // Method that is called when the user clicks the "login" button.
-  void _onLoginButtonClicked(BuildContext context, AuthService authService) async {
-    FocusScope.of(context).unfocus();
+  void _onLoginButtonClicked(AuthService authService) async {
+    FocusScope.of(this.context).unfocus();
 
     final Map<String, dynamic> response = await authService.login(this.emailController.text.trim(), this.passwordController.text.trim());
 
     if (!response[Strings.SUCCESS]) {
-      return showAlert(context, AppLocalizations.of(context).translate('error'), response[Strings.MESSAGE], AppLocalizations.of(context).translate('ok')); // ERROR.
+      return showAlert(this.context, AppLocalizations.of(this.context).translate('error'), response[Strings.MESSAGE] == null ? AppLocalizations.of(this.context).translate('loginError') : response[Strings.MESSAGE], AppLocalizations.of(this.context).translate('ok')); // ERROR.
     }
 
-    print(response);
+    // TODO - Connect to socket server.
+
+    Navigator.pushReplacementNamed(this.context, Routes.USERS_PAGE);
   }
 }
 

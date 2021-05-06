@@ -9,7 +9,8 @@ class Backend {
   static const String CONTENT_TYPE = 'Content-Type';
   static const String CONTENT_APPLICATION_JSON = 'application/json';
 
-  // Users.
+  // Auth.
   static const String LOGIN = 'login';
+  static const String SIGN_UP = 'signup';
 
 }

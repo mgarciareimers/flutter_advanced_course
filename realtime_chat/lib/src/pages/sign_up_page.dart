@@ -1,10 +1,18 @@
 import 'dart:io';
 
-import 'package:app/src/routes/routes.dart';
+import 'package:app/src/commons/constants/strings.dart';
+import 'package:app/src/commons/utils/show_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// Sevices.
+import 'package:app/src/services/auth_service.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
+
+// Routes.
+import 'package:app/src/routes/routes.dart';
 
 // Constants.
 import 'package:app/src/commons/constants/custom_colors.dart';
@@ -93,6 +101,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = Provider.of<AuthService>(context);
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Sizes.MARGIN_16 * 2),
       child: Column(
@@ -130,8 +140,9 @@ class __FormState extends State<_Form> {
           SizedBox(height: Sizes.MARGIN_16),
 
           ElevatedButtonCustom(
-            onPressed: this._onCreateAccountButtonClicked,
+            onPressed: (context) => authService.isLoading ? null : this._onCreateAccountButtonClicked(authService),
             text: AppLocalizations.of(context).translate('createAccount'),
+            backgroundColor: authService.isLoading ? CustomColors.GRAY : CustomColors.BLUE_TUENTI,
           ),
         ],
       ),
@@ -139,9 +150,22 @@ class __FormState extends State<_Form> {
   }
 
   // Method that is called when the user clicks the "create account" button.
-  void _onCreateAccountButtonClicked(BuildContext context) {
-    print(this.emailController.text);
-    print(this.passwordController.text);
+  void _onCreateAccountButtonClicked(AuthService authService) async {
+    FocusScope.of(this.context).unfocus();
+
+    if (this.passwordController.text.trim() != this.confirmPasswordController.text.trim()) {
+      return showAlert(this.context, AppLocalizations.of(this.context).translate('error'), AppLocalizations.of(this.context).translate('signUpPasswordsNotEqualError'), AppLocalizations.of(this.context).translate('ok')); // ERROR.
+    }
+
+    final Map<String, dynamic> response = await authService.signUp(this.nameController.text.trim(), this.emailController.text.trim(), this.passwordController.text.trim());
+
+    if (!response[Strings.SUCCESS]) {
+      return showAlert(this.context, AppLocalizations.of(this.context).translate('error'), response[Strings.MESSAGE] == null ? AppLocalizations.of(this.context).translate('signUpError') : response[Strings.MESSAGE], AppLocalizations.of(this.context).translate('ok')); // ERROR.
+    }
+
+    // TODO - Connect to socket server.
+
+    Navigator.pushNamed(this.context, Routes.USERS_PAGE);
   }
 }
 

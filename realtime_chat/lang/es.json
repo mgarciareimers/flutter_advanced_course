@@ -16,5 +16,8 @@
   "typeAMessage" : "Escribe un mensaje",
   "" : "",
 
-  "error" : "Error"
+  "error" : "Error",
+  "loginError" : "Se ha producido un error al iniciar sesión. Por favor, inténtalo de nuevo más tarde.",
+  "signUpError" : "Se ha producido un error al crear la cuenta. Por favor, inténtalo de nuevo más tarde.",
+  "signUpPasswordsNotEqualError" : "Las contraseñas deben ser iguales."
 }
