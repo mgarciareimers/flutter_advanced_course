@@ -12,10 +12,12 @@ import 'package:app/src/commons/constants/backend.dart';
 import 'package:app/src/commons/constants/strings.dart';
 
 class AuthService with ChangeNotifier {
-  UserModel user;
+  UserModel _user;
   bool _isLoading = false;
 
   final FlutterSecureStorage _storage = new FlutterSecureStorage();
+  
+  UserModel get user => this._user;
 
   bool get isLoading => this._isLoading;
   set isLoading(bool value) {
@@ -50,8 +52,8 @@ class AuthService with ChangeNotifier {
 
       String token;
 
-      if (body['data'] != null) {
-        this.user = new UserModel.fromJson(body[Strings.DATA][Strings.USER]);
+      if (body['success'] && body['data'] != null) {
+        this._user = new UserModel.fromJson(body[Strings.DATA][Strings.USER]);
         token = body[Strings.DATA][Strings.TOKEN];
       }
 
@@ -91,8 +93,8 @@ class AuthService with ChangeNotifier {
 
       String token;
 
-      if (body['data'] != null) {
-        this.user = new UserModel.fromJson(body[Strings.DATA][Strings.USER]);
+      if (body['success'] && body['data'] != null) {
+        this._user = new UserModel.fromJson(body[Strings.DATA][Strings.USER]);
         token = body[Strings.DATA][Strings.TOKEN];
       }
 
@@ -112,6 +114,33 @@ class AuthService with ChangeNotifier {
         Strings.SUCCESS: false,
         Strings.MESSAGE: null,
       };
+    }
+  }
+
+  // Method that checks if the user is logged.
+  Future<bool> isLoggedIn() async {
+    try {
+      final response = await http.get(Uri.parse('${ Backend.BASE_URL }/${ Backend.API }/${ Backend.V1 }/${ Backend.REFRESH }'), headers: { Backend.CONTENT_TYPE: Backend.CONTENT_APPLICATION_JSON, Strings.TOKEN: await getJWT() });
+
+      final body = jsonDecode(response.body);
+
+      String token;
+
+      if (body['success'] && body['data'] != null) {
+        this._user = new UserModel.fromJson(body[Strings.DATA][Strings.USER]);
+        token = body[Strings.DATA][Strings.TOKEN];
+      }
+
+      // Save token in memory.
+      if (token == null) {
+        await removeJWT();
+      } else {
+        await this._saveJWT(token);
+      }
+
+      return token != null && token.length > 0;
+    } catch(e) {
+      return false;
     }
   }
 }

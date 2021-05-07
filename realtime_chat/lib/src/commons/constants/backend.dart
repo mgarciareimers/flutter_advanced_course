@@ -11,6 +11,7 @@ class Backend {
 
   // Auth.
   static const String LOGIN = 'login';
+  static const String REFRESH = 'refresh';
   static const String SIGN_UP = 'signup';
 
 }

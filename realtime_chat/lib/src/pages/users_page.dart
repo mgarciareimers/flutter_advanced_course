@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+// Services.
+import 'package:app/src/services/auth_service.dart';
+
 // Models.
 import 'package:app/src/models/user_model.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
+
+// Routes.
+import 'package:app/src/routes/routes.dart';
 
 // Constants.
 import 'package:app/src/commons/constants/sizes.dart';
@@ -61,6 +67,10 @@ class _UsersPageState extends State<UsersPage> {
       backgroundColor: Colors.white,
       centerTitle: true,
       title: Text(AppLocalizations.of(context).translate('appName'), style: TextStyle(color: CustomColors.BLUE_TUENTI)),
+      leading: InkWell(
+        child: Icon(Icons.logout, color: Colors.black),
+        onTap: () => this._onLogoutButtonClicked(),
+      ),
       actions: [
         Container(
           width: Sizes.MARGIN_12,
@@ -106,5 +116,13 @@ class _UsersPageState extends State<UsersPage> {
     await Future.delayed(Duration(milliseconds: 1000));
     this.refreshController.refreshCompleted();
     print('Complete!');
+  }
+
+  // Method that is called when the user clicks the logout button.
+  void _onLogoutButtonClicked() {
+    // TODO - Disconnect from socket server.
+
+    AuthService.removeJWT();
+    Navigator.pushReplacementNamed(this.context, Routes.LOGIN_PAGE);
   }
 }

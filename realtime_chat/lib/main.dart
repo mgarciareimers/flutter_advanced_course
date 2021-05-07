@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: Strings.APP_NAME,
         debugShowCheckedModeBanner: false,
-        initialRoute: Routes.LOGIN_PAGE,
+        initialRoute: Routes.LOADING_PAGE,
         routes: Routes.define(),
 
         // Supported local languages.
