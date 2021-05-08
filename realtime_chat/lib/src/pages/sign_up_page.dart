@@ -1,20 +1,19 @@
-import 'dart:io';
-
-import 'package:app/src/commons/constants/strings.dart';
-import 'package:app/src/commons/utils/show_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Sevices.
+// Services.
 import 'package:app/src/services/auth_service.dart';
+import 'package:app/src/services/socket_service.dart';
 
 // Commons.
+import 'package:app/src/commons/utils/show_alert.dart';
 import 'package:app/src/commons/utils/app_localizations.dart';
 
 // Routes.
 import 'package:app/src/routes/routes.dart';
 
 // Constants.
+import 'package:app/src/commons/constants/strings.dart';
 import 'package:app/src/commons/constants/custom_colors.dart';
 import 'package:app/src/commons/constants/sizes.dart';
 
@@ -163,7 +162,8 @@ class __FormState extends State<_Form> {
       return showAlert(this.context, AppLocalizations.of(this.context).translate('error'), response[Strings.MESSAGE] == null ? AppLocalizations.of(this.context).translate('signUpError') : response[Strings.MESSAGE], AppLocalizations.of(this.context).translate('ok')); // ERROR.
     }
 
-    // TODO - Connect to socket server.
+    // Connect to socket server.
+    Provider.of<SocketService>(this.context, listen: false).connect();
 
     Navigator.pushNamed(this.context, Routes.USERS_PAGE);
   }
@@ -178,8 +178,8 @@ class _Labels extends StatelessWidget {
           Text(AppLocalizations.of(context).translate('alreadyAnAccount'), style: TextStyle(fontSize: Sizes.FONT_14, color: Colors.black54, fontWeight: FontWeight.w300)),
           SizedBox(height: Sizes.MARGIN_4),
           InkWell(
-              onTap: () => this._onLoginLinkClicked(context),
-              child: Text(AppLocalizations.of(context).translate('logInHere'), style: TextStyle(fontSize: Sizes.FONT_16, color: CustomColors.BLUE_TUENTI, fontWeight: FontWeight.bold))
+            onTap: () => this._onLoginLinkClicked(context),
+            child: Text(AppLocalizations.of(context).translate('logInHere'), style: TextStyle(fontSize: Sizes.FONT_16, color: CustomColors.BLUE_TUENTI, fontWeight: FontWeight.bold))
           ),
         ],
       ),

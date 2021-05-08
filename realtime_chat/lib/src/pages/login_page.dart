@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 // Services.
 import 'package:app/src/services/auth_service.dart';
+import 'package:app/src/services/socket_service.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
@@ -133,7 +134,8 @@ class __FormState extends State<_Form> {
       return showAlert(this.context, AppLocalizations.of(this.context).translate('error'), response[Strings.MESSAGE] == null ? AppLocalizations.of(this.context).translate('loginError') : response[Strings.MESSAGE], AppLocalizations.of(this.context).translate('ok')); // ERROR.
     }
 
-    // TODO - Connect to socket server.
+    // Connect to socket server.
+    Provider.of<SocketService>(this.context, listen: false).connect();
 
     Navigator.pushReplacementNamed(this.context, Routes.USERS_PAGE);
   }

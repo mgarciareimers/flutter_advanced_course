@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // Services.
+import 'package:app/src/services/socket_service.dart';
 import 'package:app/src/services/auth_service.dart';
 
 // Constants.
@@ -61,7 +62,9 @@ class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin
     Timer(Duration(seconds: 3), () {
       if (mounted) {
         if (authenticated) {
-          // TODO - Connect to socket.
+          // Connect to socket.
+          Provider.of<SocketService>(this.context, listen: false).connect();
+
           Navigator.pushReplacement(this.context, PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => UsersPage(), transitionDuration: Duration(milliseconds: 0)));
         } else {
           Navigator.pushReplacement(this.context, PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => LoginPage(), transitionDuration: Duration(milliseconds: 0)));

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // Services.
+import 'package:app/src/services/socket_service.dart';
 import 'package:app/src/services/auth_service.dart';
 
 // Models.
@@ -30,6 +32,7 @@ class _UsersPageState extends State<UsersPage> {
   ];
 
   RefreshController refreshController;
+  SocketService socketService;
 
   @override
   void initState() {
@@ -45,6 +48,8 @@ class _UsersPageState extends State<UsersPage> {
 
   @override
   Widget build(BuildContext context) {
+    this._init();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: this._createAppBar(),
@@ -61,8 +66,15 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
+  // Method that initializes the variables.
+  void _init() {
+    this.socketService = Provider.of<SocketService>(this.context, listen: true);
+  }
+
   // Method that creates the app bar.
   AppBar _createAppBar() {
+    final ServerStatus serverStatus = this.socketService.serverStatus;
+
     return AppBar(
       backgroundColor: Colors.white,
       centerTitle: true,
@@ -76,7 +88,7 @@ class _UsersPageState extends State<UsersPage> {
           width: Sizes.MARGIN_12,
           margin: EdgeInsets.only(right: Sizes.MARGIN_16),
           decoration: BoxDecoration(
-            color: Colors.green,
+            color: serverStatus == ServerStatus.Online ? Colors.green : serverStatus == ServerStatus.Connecting ? Colors.orange : Colors.red,
             shape: BoxShape.circle,
           ),
         )
@@ -120,7 +132,10 @@ class _UsersPageState extends State<UsersPage> {
 
   // Method that is called when the user clicks the logout button.
   void _onLogoutButtonClicked() {
-    // TODO - Disconnect from socket server.
+    // Disconnect from socket server.
+    try {
+      Provider.of<SocketService>(this.context, listen: false).disconnect();
+    } catch(e) {}
 
     AuthService.removeJWT();
     Navigator.pushReplacementNamed(this.context, Routes.LOGIN_PAGE);

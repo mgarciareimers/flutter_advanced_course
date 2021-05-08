@@ -1,12 +1,15 @@
-import 'package:app/src/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-// Routes.
-import 'package:app/src/routes/routes.dart';
+// Services.
+import 'package:app/src/services/auth_service.dart';
+import 'package:app/src/services/socket_service.dart';
 
 // Commons.
 import 'package:app/src/commons/utils/app_localizations.dart';
+
+// Routes.
+import 'package:app/src/routes/routes.dart';
 
 // Constants.
 import 'package:app/src/commons/constants/strings.dart';
@@ -20,6 +23,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
+        ChangeNotifierProvider(create: (context) => SocketService()),
       ],
       child: MaterialApp(
         title: Strings.APP_NAME,
