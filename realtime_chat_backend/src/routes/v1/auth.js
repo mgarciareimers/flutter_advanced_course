@@ -1,6 +1,7 @@
 /**
  * path: /api/v1/
  */
+
 const { Router } = require('express');
 const controller = require('../../controllers/auth');
 const fieldsValidator = require('../../middlewares/auth_fields_validator');
